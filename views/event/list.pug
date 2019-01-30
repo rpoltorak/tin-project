@@ -1,0 +1,30 @@
+extends ../layout
+
+block content
+  h1 Events
+  p.lead List of all events
+  hr
+  .row
+    each event in events
+      .col-md-8
+        h2= event.name
+        p= event.date
+        p= event.description
+        p
+          a.btn.btn-raised(href='#', role='button') View details »
+          form(method='POST' action='/events/delete')
+            input(type='hidden', name='_csrf', value=_csrf)
+            input(type='hidden', name='id', value=event._id)
+            button.btn.btn-raised(type='submit') Delete
+    else
+      .col-md-8
+        p There are no events yet
+  .row
+    .col-md-8
+      ul
+        each category in categories
+          li= category.name
+        else
+          li There are no values
+
+

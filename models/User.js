@@ -8,23 +8,18 @@ const userSchema = new mongoose.Schema({
   passwordResetToken: String,
   passwordResetExpires: Date,
 
-  snapchat: String,
-  facebook: String,
-  twitter: String,
-  google: String,
-  github: String,
-  instagram: String,
-  linkedin: String,
-  steam: String,
-  tokens: Array,
-
   profile: {
     name: String,
     gender: String,
     location: String,
     website: String,
     picture: String
-  }
+  },
+
+  events: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Event'
+  }]
 }, { timestamps: true });
 
 /**
