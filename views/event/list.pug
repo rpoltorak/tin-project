@@ -3,28 +3,22 @@ extends ../layout
 block content
   h1 Events
   p.lead List of all events
+  p
+    a.btn.btn-raised(href='events/add', role='button') Add
   hr
   .row
     .col-md-8
       ul
         each category in categories
-          li= category.name
+          li
+            a(href='categories/' + category.name)= category.name
         else
           li There are no categories
   .row
     each event in events
       .col-md-8
-        h2= event.name
-        p= event.date
-        p= event.description
-        p
-          a.btn.btn-raised(href='#', role='button') View details
-          if event.creator.toString() == userId.toString()
-            a.btn.btn-raised(href='events/edit/' + event._id, role='button') Edit
-            form(method='POST' action='/events/delete')
-              input(type='hidden', name='_csrf', value=_csrf)
-              input(type='hidden', name='id', value=event._id)
-              button.btn.btn-raised(type='submit') Delete
+        a(href='events/' + event._id, role='button')= event.name
+        p= `${event.date}, ${event.category}`
     else
       .col-md-8
         p There are no events yet

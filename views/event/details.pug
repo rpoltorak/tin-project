@@ -1,0 +1,9 @@
+extends ../layout
+
+block content
+  h1= event.name
+  p.lead= event.date
+  hr
+  .row
+    .col-md-8
+      p= event.description

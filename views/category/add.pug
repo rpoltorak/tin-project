@@ -2,7 +2,7 @@ extends ../layout
 
 block content
   .pb-2.mt-2.mb-4.border-bottom
-    h3 Add new event
+    h3 Add new category
 
   form(method='POST')
     input(type='hidden', name='_csrf', value=_csrf)
@@ -10,16 +10,6 @@ block content
       label(class='col-md-2 col-form-label font-weight-bold', for='name') Name
       .col-md-8
         input.form-control(type='text', name='name', id='name', autocomplete='name', autofocus=true)
-    .form-group.row
-      label(class='col-md-2 col-form-label font-weight-bold', for='category') Name
-      .col-md-8
-        select(name='category', id='category')
-          each category in categories
-            option(value=category.name)= category.name
-    .form-group.row
-      label(class='col-md-2 col-form-label font-weight-bold', for='date') Date
-      .col-md-8
-        input.form-control(type='date', name='date', id='date', autocomplete='date')
     .form-group.row
       label(class='col-md-2 col-form-label font-weight-bold', for='description') Description
       .col-md-8

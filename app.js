@@ -18,9 +18,6 @@ const passport = require('passport');
 const expressValidator = require('express-validator');
 const expressStatusMonitor = require('express-status-monitor');
 const sass = require('node-sass-middleware');
-const multer = require('multer');
-
-const upload = multer({ dest: path.join(__dirname, 'uploads') });
 
 /**
  * Load environment variables from .env file, where API keys and passwords are configured.
@@ -30,11 +27,10 @@ dotenv.load({ path: '.env.example' });
 /**
  * Controllers (route handlers).
  */
-const homeController = require('./controllers/home');
 const userController = require('./controllers/user');
-const apiController = require('./controllers/api');
 const contactController = require('./controllers/contact');
 const eventController = require('./controllers/event');
+const categoriesController = require('./controllers/category');
 
 /**
  * API keys and Passport configuration.
@@ -126,7 +122,7 @@ app.use('/webfonts', express.static(path.join(__dirname, 'node_modules/@fortawes
 /**
  * Primary app routes.
  */
-app.get('/', eventController.index);
+
 app.get('/login', userController.getLogin);
 app.post('/login', userController.postLogin);
 app.get('/logout', userController.logout);
@@ -143,18 +139,19 @@ app.post('/account/profile', passportConfig.isAuthenticated, userController.post
 app.post('/account/password', passportConfig.isAuthenticated, userController.postUpdatePassword);
 app.post('/account/delete', passportConfig.isAuthenticated, userController.postDeleteAccount);
 
-app.get('/events', eventController.index);
+app.get('/', eventController.index);
 app.get('/events/add', eventController.getAddEvent);
 app.post('/events/add', eventController.postAddEvent);
 app.post('/events/delete', eventController.postRemoveEvent);
 app.get('/events/edit/:id', eventController.getEditEvent);
+app.post('/events/edit', eventController.postEditEvent);
+app.get('/events/:id', eventController.getEventDetails);
+app.get('/events', eventController.getMyEvents);
 
-/**
- * API examples routes.
- */
-app.get('/api', apiController.getApi);
-app.get('/api/upload', apiController.getFileUpload);
-app.post('/api/upload', upload.single('myFile'), apiController.postFileUpload);
+app.get('/categories/add', categoriesController.getAddCategory);
+app.post('/categories/add', categoriesController.postAddCategory);
+
+app.get('/categories/:category', eventController.getEventsByCategory);
 
 /**
  * Error Handler.
