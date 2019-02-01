@@ -126,7 +126,7 @@ app.use('/webfonts', express.static(path.join(__dirname, 'node_modules/@fortawes
 /**
  * Primary app routes.
  */
-app.get('/', homeController.index);
+app.get('/', eventController.index);
 app.get('/login', userController.getLogin);
 app.post('/login', userController.postLogin);
 app.get('/logout', userController.logout);
@@ -147,6 +147,7 @@ app.get('/events', eventController.index);
 app.get('/events/add', eventController.getAddEvent);
 app.post('/events/add', eventController.postAddEvent);
 app.post('/events/delete', eventController.postRemoveEvent);
+app.get('/events/edit/:id', eventController.getEditEvent);
 
 /**
  * API examples routes.

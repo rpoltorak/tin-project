@@ -18,6 +18,7 @@ exports.index = (req, res) => {
     const { categories, events } = results;
     res.render('event/list', {
       title: 'Events',
+      userId: req.user._id,
       categories,
       events
     });
@@ -42,9 +43,63 @@ exports.postAddEvent = (req, res) => {
 
   const { name, description, date } = req.body;
 
-  Event.create({ name, description, date }).then(() => res.redirect('/events'));
+  Event.create({
+    name,
+    description,
+    date,
+    creator: req.user._id
+  }).then(() => res.redirect('/events'));
 };
 
 exports.postRemoveEvent = (req, res) => {
-  Event.findOneAndDelete({ _id: req.body.id }).then(() => res.redirect('/events'));
+  Event.findOne({ _id: req.body.id }).then((event) => {
+    if (event.creator.toString() === req.user._id.toString()) {
+      event.remove(() => res.redirect('/events'));
+    } else {
+      res.status(403).send('403: Forbidden access');
+    }
+  });
+};
+
+exports.getEditEvent = (req, res) => {
+  Event.findOne({ _id: req.params.id }).then((event) => {
+    console.log('event', JSON.stringify(event));
+    if (event) {
+      if (event.creator.toString() === req.user._id.toString()) {
+        res.render('event/edit', {
+          event
+        });
+      } else {
+        res.status(403).send('403: Forbidden access');
+      }
+    } else {
+      res.status(404).send('404: Not found');
+    }
+  });
+};
+
+exports.postUpdateEvent = (req, res) => {
+  req.assert('name', 'Name cannot be empty').notEmpty();
+  req.assert('description', 'Description cannot be empty').notEmpty();
+  req.assert('date', 'Date cannot be blank').notEmpty();
+
+  const errors = req.validationErrors();
+
+  if (errors) {
+    req.flash('errors', errors);
+    return res.redirect('/events/add');
+  }
+
+  const {
+    name,
+    description,
+    date
+  } = req.body;
+
+  Event.create({
+    name,
+    description,
+    date,
+    creator: req.user._id
+  }).then(() => res.redirect('/events'));
 };
