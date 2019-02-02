@@ -1,26 +1,35 @@
 extends ../layout
 
 block content
-  h1= event.name
-  p.lead= event.date
-  hr
-  .row
-    .col-md-8
-      if user && !isInAttendees(event)      
-        p
-          form(method='POST' action='/events/attend')
-              input(type='hidden', name='_csrf', value=_csrf)
-              input(type='hidden', name='id', value=event._id)
-              button(type='submit') Attend
-        
-  .row
-    .col-md-8
-      p= event.category.name
-      p= event.location
-      p= event.creator.email
-      p= event.description
-  .row
-    each attendee in event.attendees
-      .col-md-8
-        a(href='/users/' + attendee._id)= attendee.email
+  .my-3.p-4.bg-white.rounded.shadow-sm
+    form(method='POST' action='/events/attend')
+      h2= event.name
+      p.lead #{event.date}: #{event.location}
+        if user && !isInAttendees(event)      
+          input(type='hidden', name='_csrf', value=_csrf)
+          input(type='hidden', name='id', value=event._id)
+          button.btn.btn-primary.float-right(type='submit') Attend to event
+      hr
+      .row
+        .col-md-10
+          p 
+            h4 Category
+            strong #{event.category.name}
+          p 
+            h4 Location
+            strong #{event.location}
+          p 
+            h4 Creator
+            a(href='/users/' + event.creator._id) #{event.creator.email}
+          p 
+            h4 Description
+            span #{event.description}
+      .row
+        .col-md-4
+          h4 Attendees
+          table.table
+            each attendee in event.attendees
+              tr
+                td.px-0
+                  a(href='/users/' + attendee._id)= attendee.email
 

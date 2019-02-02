@@ -260,7 +260,7 @@ exports.attendToEvent = (req, res) => {
         User.findOne({ _id: req.user._id }).then((user) => {
           user.updateOne({
             "$push": { events: req.body.id }
-          }).then(() => res.redirect('/'));
+          });
         });
       });
     } else {

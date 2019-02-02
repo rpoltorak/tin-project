@@ -15,15 +15,15 @@ block content
       .col-md-8
         input.form-control(type='text', name='location', id='location')
     .form-group.row
-      label(class='col-md-2 col-form-label font-weight-bold', for='category') Name
+      label(class='col-md-2 col-form-label font-weight-bold', for='date') Date
+      .col-md-8
+        input.form-control(type='date', name='date', id='date')
+    .form-group.row
+      label(class='col-md-2 col-form-label font-weight-bold', for='category') Category
       .col-md-8
         select(name='category', id='category')
           each category in categories
             option(value=category._id)= category.name
-    .form-group.row
-      label(class='col-md-2 col-form-label font-weight-bold', for='date') Date
-      .col-md-8
-        input.form-control(type='date', name='date', id='date')
     .form-group.row
       label(class='col-md-2 col-form-label font-weight-bold', for='description') Description
       .col-md-8

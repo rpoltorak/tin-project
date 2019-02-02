@@ -1,26 +1,26 @@
 extends ../layout
 
 block content
-  h1 Events
-  p.lead List of all events
-  p
+  p.lead List of all upcoming events
     if userId
-      a.btn.btn-raised(href='events/add', role='button') Add
+      a.btn.btn-primary.float-right(href='/events/add', role='button') Add new event
   hr
-  .row
-    .col-md-8
-      ul
-        each category in categories
-          li
-            a(href='categories/' + category._id)= category.name
-        else
-          li There are no categories
-  .row
+  .my-3.p-3.bg-white.rounded.shadow-sm
+    ul.nav
+      each category in categories
+        li.nav-item
+          a.nav-link(href='/categories/' + category._id)= category.name
+      else
+        li There are no categories
+  .my-3.px-3.pb-0.pt-3.bg-white.rounded.shadow-sm
     each event in events
-      .col-md-8
-        a(href='events/' + event._id, role='button')= event.name
-        p #{event.date}, #{event.location}
-        p #{event.category.name}
+      .media
+        p.media-body.pb-3.border-bottom.border-gray
+          a(href='/events/' + event._id, role='button')
+            strong.d-block.text-gray-dark #{event.name}
+          span #{event.date}: #{event.location}
+          br
+          span.text-muted #{event.description.substring(0, 400) + '...'}
     else
-      .col-md-8
+      .media.pt-3
         p There are no events yet

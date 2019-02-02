@@ -1,17 +1,26 @@
 extends ../layout
 
 block content
-  p.lead= user.email
-  if user.profile
+  .my-3.py-2.px-4.bg-white.rounded.shadow-sm
     .row
-      .col-md-8
-        p= user.profile.name
-  .row
+      .col-md-10
+        if user.profile
+          p 
+            h4 Name
+            strong #{user.profile.name}
+        p 
+          h4 Email
+          strong #{user.email}
+  p.lead Going to following events
+  .my-3.p-4.bg-white.rounded.shadow-sm
     each event in user.events
-      .col-md-8
-        a(href='events/' + event._id, role='button')= event.name
-        p #{event.date}, #{event.location}
-        p #{event.category.name}
+      .media
+        p.media-body.pb-3.border-bottom.border-gray
+          a(href='/events/' + event._id, role='button')
+            strong.d-block.text-gray-dark #{event.name}
+          span #{event.date}: #{event.location}
+          br
+          span.text-muted #{event.description.substring(0, 200) + '...'}
     else
       .col-md-8
         p There are no events yet

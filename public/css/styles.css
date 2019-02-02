@@ -1,0 +1,20 @@
+body {
+    background-color: #eee;
+}
+
+.navbar {
+  background-color: #fff;
+}
+
+.navbar-logo {
+  padding-top: 15px;
+  padding-bottom: 10px;
+}
+
+.logo {
+  height: 25px; 
+}
+
+.dropdown-item:hover {
+  background-color: #fff;
+}

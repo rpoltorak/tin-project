@@ -1,16 +1,17 @@
 extends ../layout
 
 block content
-  h1 Events
-  p.lead List of my events
+  p.lead List of my upcoming events
   hr
-  .row
+  .my-3.px-3.pb-0.pt-3.bg-white.rounded.shadow-sm
     each event in events
-      .col-md-8
-        a(href='/events/' + event._id, role='button')= event.name
-        p= `${event.date}, ${event.category.name}`
-        p
-          a(href='/events/' + event._id, role='button') View details
+      .media
+        p.media-body.pb-3.border-bottom.border-gray
+          a(href='/events/' + event._id, role='button')
+            strong.d-block.text-gray-dark #{event.name}
+          span #{event.date}: #{event.location}
+          br
+          span.text-muted #{event.description.substring(0, 400) + '...'}
     else
-      .col-md-8
+      .media.pt-3
         p There are no events yet
