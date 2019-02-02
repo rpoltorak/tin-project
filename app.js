@@ -140,14 +140,17 @@ app.post('/account/password', passportConfig.isAuthenticated, userController.pos
 app.post('/account/delete', passportConfig.isAuthenticated, userController.postDeleteAccount);
 
 app.get('/', eventController.index);
+// app.get('/events', eventController.index);
 app.get('/events/add', eventController.getAddEvent);
 app.post('/events/add', eventController.postAddEvent);
 app.post('/events/delete', eventController.postRemoveEvent);
+app.post('/events/attend', eventController.attendToEvent);
+app.get('/events/created', eventController.getCreatedEvents);
+app.get('/events/ongoing', eventController.getOnGoingEvents);
+
 app.get('/events/edit/:id', eventController.getEditEvent);
 app.post('/events/edit', eventController.postEditEvent);
 app.get('/events/:id', eventController.getEventDetails);
-app.get('/events', eventController.getMyEvents);
-app.post('/events/attend', eventController.attendToEvent);
 
 app.get('/categories/add', categoriesController.getAddCategory);
 app.post('/categories/add', categoriesController.postAddCategory);

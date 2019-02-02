@@ -69,7 +69,8 @@ exports.postAddEvent = (req, res) => {
     description,
     date,
     category,
-    creator: req.user._id
+    creator: req.user._id,
+    attendees: []
   }).then(() => res.redirect('/'));
 };
 
@@ -80,7 +81,7 @@ exports.postRemoveEvent = (req, res) => {
 
   Event.findOne({ _id: req.body.id }).then((event) => {
     if (event.creator.toString() === req.user._id.toString()) {
-      event.remove(() => res.redirect('/events'));
+      event.remove(() => res.redirect('/'));
     } else {
       res.status(401).send('401: Unauthorized');
     }
@@ -162,15 +163,17 @@ exports.getEventDetails = (req, res) => {
   });
 };
 
-exports.getMyEvents = (req, res) => {
+exports.getCreatedEvents = (req, res) => {
   if (!req.user) {
     res.status(401).send('401: Unauthorized');
   }
 
+  console.log('user', req.user);
+
   Event.find({
     creator: req.user._id
   }).then((events) => {
-    res.render('event/my', {
+    res.render('event/created', {
       events,
       userId: req.user._id
     });
@@ -207,6 +210,22 @@ exports.attendToEvent = (req, res) => {
     } else {
       res.status(404).send('404: Not found');
     }
+  });
+};
+
+exports.getOnGoingEvents = (req, res) => {
+  if (!req.user) {
+    res.status(401).send('401: Unauthorized');
+  }
+
+  Event.find({
+    attendees: {
+      "$in": req.user._id
+    }
+  }).then((events) => {
+    res.render('event/ongoing', {
+      events
+    });
   });
 };
 

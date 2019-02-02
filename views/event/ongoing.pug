@@ -1,0 +1,16 @@
+extends ../layout
+
+block content
+  h1 Events
+  p.lead List of my events
+  hr
+  .row
+    each event in events
+      .col-md-8
+        a(href='events/' + event._id, role='button')= event.name
+        p= `${event.date}, ${event.category}`
+        p
+          a(href='events/' + event._id, role='button') View details
+    else
+      .col-md-8
+        p There are no events yet
