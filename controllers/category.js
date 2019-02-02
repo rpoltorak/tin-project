@@ -11,10 +11,18 @@ exports.index = (req, res) => {
 };
 
 exports.getAddCategory = (req, res) => {
+  if (!req.user) {
+    res.status(401).send('401: Unauthorized');
+  }
+
   res.render('category/add');
 };
 
 exports.postAddCategory = (req, res) => {
+  if (!req.user) {
+    res.status(401).send('401: Unauthorized');
+  }
+
   req.assert('name', 'Name cannot be empty').notEmpty();
   req.assert('description', 'Description cannot be empty').notEmpty();
 
@@ -33,5 +41,5 @@ exports.postAddCategory = (req, res) => {
   EventCategory.create({
     name,
     description
-  }).then(() => res.redirect('/categories'));
+  }).then(() => res.redirect('/'));
 };

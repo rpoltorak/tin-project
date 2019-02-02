@@ -147,6 +147,7 @@ app.get('/events/edit/:id', eventController.getEditEvent);
 app.post('/events/edit', eventController.postEditEvent);
 app.get('/events/:id', eventController.getEventDetails);
 app.get('/events', eventController.getMyEvents);
+app.post('/events/attend', eventController.attendToEvent);
 
 app.get('/categories/add', categoriesController.getAddCategory);
 app.post('/categories/add', categoriesController.postAddCategory);

@@ -4,7 +4,8 @@ block content
   h1 Events
   p.lead List of all events
   p
-    a.btn.btn-raised(href='events/add', role='button') Add
+    if user
+      a.btn.btn-raised(href='events/add', role='button') Add
   hr
   .row
     .col-md-8
@@ -19,6 +20,11 @@ block content
       .col-md-8
         a(href='events/' + event._id, role='button')= event.name
         p= `${event.date}, ${event.category}`
+        if user && !isInAttendees(event)
+            form(method='POST' action='/events/attend')
+              input(type='hidden', name='_csrf', value=_csrf)
+              input(type='hidden', name='id', value=event._id)
+              button(type='submit') Attend
     else
       .col-md-8
         p There are no events yet

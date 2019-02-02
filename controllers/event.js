@@ -18,22 +18,34 @@ exports.index = (req, res) => {
     const { categories, events } = results;
     res.render('event/list', {
       title: 'Events',
-      userId: req.user._id,
+      userId: req.user ? req.user._id : null,
       categories,
-      events
+      events,
+      isInAttendees: (event) => {
+        return event.attendees.some((attendee) => attendee.equals(req.user._id));
+      }
     });
   });
 };
 
 exports.getAddEvent = (req, res) => {
+  if (!req.user) {
+    res.status(401).send('401: Unauthorized');
+  }
+
   EventCategory.find().then((categories) => {
     res.render('event/add', {
-      categories
+      categories,
+      user: req.user
     });
   });
 };
 
 exports.postAddEvent = (req, res) => {
+  if (!req.user) {
+    res.status(401).send('401: Unauthorized');
+  }
+
   req.assert('name', 'Name cannot be empty').notEmpty();
   req.assert('description', 'Description cannot be empty').notEmpty();
   req.assert('date', 'Date cannot be blank').notEmpty();
@@ -62,16 +74,24 @@ exports.postAddEvent = (req, res) => {
 };
 
 exports.postRemoveEvent = (req, res) => {
+  if (!req.user) {
+    res.status(401).send('401: Unauthorized');
+  }
+
   Event.findOne({ _id: req.body.id }).then((event) => {
     if (event.creator.toString() === req.user._id.toString()) {
       event.remove(() => res.redirect('/events'));
     } else {
-      res.status(403).send('403: Forbidden access');
+      res.status(401).send('401: Unauthorized');
     }
   });
 };
 
 exports.getEditEvent = (req, res) => {
+  if (!req.user) {
+    res.status(401).send('401: Unauthorized');
+  }
+
   Event.findOne({ _id: req.params.id }).then((event) => {
     console.log('event', JSON.stringify(event));
     if (event) {
@@ -80,15 +100,19 @@ exports.getEditEvent = (req, res) => {
           event
         });
       } else {
-        res.status(403).send('403: Forbidden access');
+        res.status(401).send('401: Unauthorized');
       }
     } else {
-      res.status(404).send('404: Not found');
+      res.status(401).send('404: Not found');
     }
   });
 };
 
 exports.postEditEvent = (req, res) => {
+  if (!req.user) {
+    res.status(401).send('401: Unauthorized');
+  }
+
   req.assert('name', 'Name cannot be empty').notEmpty();
   req.assert('description', 'Description cannot be empty').notEmpty();
   req.assert('date', 'Date cannot be blank').notEmpty();
@@ -116,7 +140,7 @@ exports.postEditEvent = (req, res) => {
           creator: req.user._id
         }).then(() => res.redirect('/'));
       } else {
-        res.status(403).send('403: Forbidden access');
+        res.status(401).send('401: Unauthorized');
       }
     } else {
       res.status(404).send('404: Not found');
@@ -139,6 +163,10 @@ exports.getEventDetails = (req, res) => {
 };
 
 exports.getMyEvents = (req, res) => {
+  if (!req.user) {
+    res.status(401).send('401: Unauthorized');
+  }
+
   Event.find({
     creator: req.user._id
   }).then((events) => {
@@ -159,3 +187,26 @@ exports.getEventsByCategory = (req, res) => {
     });
   });
 };
+
+exports.attendToEvent = (req, res) => {
+  if (!req.user) {
+    res.status(401).send('401: Unauthorized');
+  }
+
+  Event.findOne({ _id: req.body.id }).then((event) => {
+    if (event) {
+      const isInAttendees = event.attendees.some((attendee) => attendee.equals(req.user._id));
+
+      if (isInAttendees) {
+        res.status(500).send('You are already an attendee of this event');
+      }
+
+      event.updateOne({
+        "$push": { attendees: req.user._id }
+      }).then(() => res.redirect('/'));
+    } else {
+      res.status(404).send('404: Not found');
+    }
+  });
+};
+
