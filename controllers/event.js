@@ -1,6 +1,7 @@
 const async = require('async');
 const Event = require('../models/Event.js');
 const EventCategory = require('../models/EventCategory.js');
+const User = require('../models/User');
 
 exports.index = (req, res) => {
   async.series({
@@ -18,7 +19,7 @@ exports.index = (req, res) => {
             res.status(500).send('500: Internal server error');
           }
           callback(null, events);
-      });
+        });
     }
   }, (error, results) => {
     if (error) {
@@ -31,10 +32,7 @@ exports.index = (req, res) => {
       title: 'Events',
       userId: req.user ? req.user._id : null,
       categories,
-      events,
-      isInAttendees: (event) => {
-        return event.attendees.some((attendee) => attendee.equals(req.user._id));
-      }
+      events
     });
   });
 };
@@ -57,9 +55,10 @@ exports.postAddEvent = (req, res) => {
     res.status(401).send('401: Unauthorized');
   }
 
-  req.assert('name', 'Name cannot be empty').notEmpty();
-  req.assert('description', 'Description cannot be empty').notEmpty();
-  req.assert('date', 'Date cannot be blank').notEmpty();
+  req.assert('name', 'Bad name').isLength({ min: 5 });
+  req.assert('description', 'Bad description').isLength({ min: 10 });
+  req.assert('date', 'Bad date').notEmpty();
+  req.assert('location', 'Bad location').isLength({ min: 5 });
 
   const errors = req.validationErrors();
 
@@ -72,14 +71,16 @@ exports.postAddEvent = (req, res) => {
     name,
     description,
     date,
-    category
+    category,
+    location
   } = req.body;
 
   Event.create({
     name,
     description,
     date,
-    category: category,
+    location,
+    category,
     creator: req.user._id,
     attendees: []
   }).then(() => res.redirect('/'));
@@ -105,7 +106,6 @@ exports.getEditEvent = (req, res) => {
   }
 
   Event.findOne({ _id: req.params.id }).then((event) => {
-    console.log('event', JSON.stringify(event));
     if (event) {
       if (event.creator.toString() === req.user._id.toString()) {
         res.render('event/edit', {
@@ -125,9 +125,10 @@ exports.postEditEvent = (req, res) => {
     res.status(401).send('401: Unauthorized');
   }
 
-  req.assert('name', 'Name cannot be empty').notEmpty();
-  req.assert('description', 'Description cannot be empty').notEmpty();
-  req.assert('date', 'Date cannot be blank').notEmpty();
+  req.assert('name', 'Bad name').isLength({ min: 5 });
+  req.assert('description', 'Bad description').isLength({ min: 10 });
+  req.assert('date', 'Bad date').notEmpty();
+  req.assert('location', 'Bad location').isLength({ min: 5 });
 
   const errors = req.validationErrors();
 
@@ -139,7 +140,8 @@ exports.postEditEvent = (req, res) => {
   const {
     name,
     description,
-    date
+    date,
+    location
   } = req.body;
 
   Event.findOne({ _id: req.body.id }).then((event) => {
@@ -149,6 +151,7 @@ exports.postEditEvent = (req, res) => {
           name,
           description,
           date,
+          location,
           creator: req.user._id
         }).then(() => res.redirect('/'));
       } else {
@@ -174,7 +177,8 @@ exports.getEventDetails = (req, res) => {
 
       if (event) {
         res.render('event/details', {
-          event
+          event,
+          isInAttendees: event => event.attendees.some(attendee => attendee.equals(req.user._id))
         });
       } else {
         res.status(404).send('404: Not found');
@@ -252,7 +256,13 @@ exports.attendToEvent = (req, res) => {
 
       event.updateOne({
         "$push": { attendees: req.user._id }
-      }).then(() => res.redirect('/'));
+      }).then(() => {
+        User.findOne({ _id: req.user._id }).then((user) => {
+          user.updateOne({
+            "$push": { events: req.body.id }
+          }).then(() => res.redirect('/'));
+        });
+      });
     } else {
       res.status(404).send('404: Not found');
     }

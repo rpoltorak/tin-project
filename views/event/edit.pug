@@ -12,6 +12,10 @@ block content
       .col-md-8
         input.form-control(type='text', name='name', id='name', autocomplete='name', value=event.name)
     .form-group.row
+      label(class='col-md-2 col-form-label font-weight-bold', for='location') Location
+      .col-md-8
+        input.form-control(type='text', name='location', id='location')
+    .form-group.row
       label(class='col-md-2 col-form-label font-weight-bold', for='date') Date
       .col-md-8
         input.form-control(type='date', name='date', id='date', autocomplete='date', value=event.date)

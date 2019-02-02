@@ -6,11 +6,21 @@ block content
   hr
   .row
     .col-md-8
+      if user && !isInAttendees(event)      
+        p
+          form(method='POST' action='/events/attend')
+              input(type='hidden', name='_csrf', value=_csrf)
+              input(type='hidden', name='id', value=event._id)
+              button(type='submit') Attend
+        
+  .row
+    .col-md-8
       p= event.category.name
+      p= event.location
       p= event.creator.email
       p= event.description
   .row
     each attendee in event.attendees
       .col-md-8
-        a(href='users/' + attendee._id)= attendee.email
+        a(href='/users/' + attendee._id)= attendee.email
 

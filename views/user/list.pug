@@ -1,0 +1,9 @@
+extends ../layout
+
+block content
+  h1 Users
+  p.lead List of all Users
+  .row
+    each user in users
+      .col-md-8
+        a(href='/users/' + user._id, role='button')= user.email

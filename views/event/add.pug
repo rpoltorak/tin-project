@@ -9,7 +9,11 @@ block content
     .form-group.row
       label(class='col-md-2 col-form-label font-weight-bold', for='name') Name
       .col-md-8
-        input.form-control(type='text', name='name', id='name', autocomplete='name', autofocus=true)
+        input.form-control(type='text', name='name', id='name')
+    .form-group.row
+      label(class='col-md-2 col-form-label font-weight-bold', for='location') Location
+      .col-md-8
+        input.form-control(type='text', name='location', id='location')
     .form-group.row
       label(class='col-md-2 col-form-label font-weight-bold', for='category') Name
       .col-md-8
@@ -19,7 +23,7 @@ block content
     .form-group.row
       label(class='col-md-2 col-form-label font-weight-bold', for='date') Date
       .col-md-8
-        input.form-control(type='date', name='date', id='date', autocomplete='date')
+        input.form-control(type='date', name='date', id='date')
     .form-group.row
       label(class='col-md-2 col-form-label font-weight-bold', for='description') Description
       .col-md-8
