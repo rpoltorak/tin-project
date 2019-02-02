@@ -3,7 +3,7 @@ const EventCategory = require('../models/EventCategory.js');
 exports.index = (req, res) => {
   EventCategory.find().then((categories) => {
     res.render('category/list', {
-      title: 'Events',
+      title: 'Categories',
       userId: req.user._id,
       categories,
     });

@@ -7,12 +7,12 @@ block content
   .row
     each event in events
       .col-md-8
-        a(href='events/' + event._id, role='button')= event.name
-        p= `${event.date}, ${event.category}`
+        a(href='/events/' + event._id, role='button')= event.name
+        p= `${event.date}, ${event.category.name}`
         p
-          a(href='events/' + event._id, role='button') View details
+          a(href='/events/' + event._id, role='button') View details
           if event.creator.toString() == userId.toString()
-            a(href='events/edit/' + event._id, role='button') Edit
+            a(href='/events/edit/' + event._id, role='button') Edit
             form(method='POST' action='/events/delete')
               input(type='hidden', name='_csrf', value=_csrf)
               input(type='hidden', name='id', value=event._id)

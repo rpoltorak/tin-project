@@ -1,14 +1,14 @@
 extends ../layout
 
 block content
-  h1= category
-  p.lead= `List events from ${category} category`
+  h1= category.name
+  p.lead= `List events from ${category.name} category`
   hr
   .row
     each event in events
       .col-md-8
         a(href='events/' + event._id, role='button')= event.name
-        p= `${event.date}, ${event.category}`
+        p= `${event.date}, ${event.category.name}`
         p
           a(href='events/' + event._id, role='button') View details
     else

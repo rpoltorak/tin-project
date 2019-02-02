@@ -10,12 +10,23 @@ exports.index = (req, res) => {
       });
     },
     events: (callback) => {
-      Event.find().then((events) => {
-        callback(null, events);
+      Event
+        .find()
+        .populate('category')
+        .exec((error, events) => {
+          if (error) {
+            res.status(500).send('500: Internal server error');
+          }
+          callback(null, events);
       });
     }
   }, (error, results) => {
+    if (error) {
+      res.status(500).send('500: Internal server error');
+    }
+
     const { categories, events } = results;
+
     res.render('event/list', {
       title: 'Events',
       userId: req.user ? req.user._id : null,
@@ -68,7 +79,7 @@ exports.postAddEvent = (req, res) => {
     name,
     description,
     date,
-    category,
+    category: category,
     creator: req.user._id,
     attendees: []
   }).then(() => res.redirect('/'));
@@ -151,16 +162,24 @@ exports.postEditEvent = (req, res) => {
 
 exports.getEventDetails = (req, res) => {
   Event.findOne({
-    _id: req.params.id
-  }).then((event) => {
-    if (event) {
-      res.render('event/details', {
-        event
-      });
-    } else {
-      res.status(404).send('404: Not found');
-    }
-  });
+    _id: req.params.id,
+  })
+  .populate('category')
+  .populate('creator')
+  .populate('attendees')
+    .exec((error, event) => {
+      if (error) {
+        res.status(500).send('500: Internal server error');
+      }
+
+      if (event) {
+        res.render('event/details', {
+          event
+        });
+      } else {
+        res.status(404).send('404: Not found');
+      }
+    });
 };
 
 exports.getCreatedEvents = (req, res) => {
@@ -168,25 +187,52 @@ exports.getCreatedEvents = (req, res) => {
     res.status(401).send('401: Unauthorized');
   }
 
-  console.log('user', req.user);
+  Event
+    .find({
+      creator: req.user._id
+    })
+    .populate('category')
+    .exec((error, events) => {
+      if (error) {
+        res.status(500).send('500: Internal server error');
+      }
 
-  Event.find({
-    creator: req.user._id
-  }).then((events) => {
-    res.render('event/created', {
-      events,
-      userId: req.user._id
+      res.render('event/created', {
+        events,
+        userId: req.user._id
+      });
     });
-  });
 };
 
 exports.getEventsByCategory = (req, res) => {
-  Event.find({
-    category: req.params.category
-  }).then((events) => {
+  async.series({
+    category: (callback) => {
+      EventCategory.findOne({
+        _id: req.params.id
+      }).then((category) => {
+        callback(null, category);
+      });
+    },
+    events: (callback) => {
+      Event
+        .find({
+          category: req.params.id
+        })
+        .populate('category')
+        .exec((error, events) => {
+          callback(null, events);
+        });
+    }
+  }, (error, results) => {
+    if (error) {
+      res.status(500).send('500: Internal server error');
+    }
+
+    const { category, events } = results;
+
     res.render('event/category', {
       events,
-      category: req.param.category
+      category
     });
   });
 };
@@ -218,14 +264,21 @@ exports.getOnGoingEvents = (req, res) => {
     res.status(401).send('401: Unauthorized');
   }
 
-  Event.find({
-    attendees: {
-      "$in": req.user._id
-    }
-  }).then((events) => {
-    res.render('event/ongoing', {
-      events
+  Event
+    .find({
+      attendees: {
+        "$in": req.user._id
+      }
+    })
+    .populate('category')
+    .exec((error, events) => {
+      if (error) {
+        res.status(500).send('500: Internal server error');
+      }
+
+      res.render('event/ongoing', {
+        events
+      });
     });
-  });
 };
 

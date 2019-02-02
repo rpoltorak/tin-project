@@ -6,4 +6,11 @@ block content
   hr
   .row
     .col-md-8
+      p= event.category.name
+      p= event.creator.email
       p= event.description
+  .row
+    each attendee in event.attendees
+      .col-md-8
+        a(href='users/' + attendee._id)= attendee.email
+

@@ -12,14 +12,14 @@ block content
       ul
         each category in categories
           li
-            a(href='categories/' + category.name)= category.name
+            a(href='categories/' + category._id)= category.name
         else
           li There are no categories
   .row
     each event in events
       .col-md-8
         a(href='events/' + event._id, role='button')= event.name
-        p= `${event.date}, ${event.category}`
+        p= `${event.date}, ${event.category.name}`
         if user && !isInAttendees(event)
             form(method='POST' action='/events/attend')
               input(type='hidden', name='_csrf', value=_csrf)

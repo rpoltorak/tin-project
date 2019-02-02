@@ -140,7 +140,6 @@ app.post('/account/password', passportConfig.isAuthenticated, userController.pos
 app.post('/account/delete', passportConfig.isAuthenticated, userController.postDeleteAccount);
 
 app.get('/', eventController.index);
-// app.get('/events', eventController.index);
 app.get('/events/add', eventController.getAddEvent);
 app.post('/events/add', eventController.postAddEvent);
 app.post('/events/delete', eventController.postRemoveEvent);
@@ -155,7 +154,7 @@ app.get('/events/:id', eventController.getEventDetails);
 app.get('/categories/add', categoriesController.getAddCategory);
 app.post('/categories/add', categoriesController.postAddCategory);
 
-app.get('/categories/:category', eventController.getEventsByCategory);
+app.get('/categories/:id', eventController.getEventsByCategory);
 
 /**
  * Error Handler.

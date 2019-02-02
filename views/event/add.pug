@@ -15,7 +15,7 @@ block content
       .col-md-8
         select(name='category', id='category')
           each category in categories
-            option(value=category.name)= category.name
+            option(value=category._id)= category.name
     .form-group.row
       label(class='col-md-2 col-form-label font-weight-bold', for='date') Date
       .col-md-8
